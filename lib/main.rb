@@ -18,7 +18,13 @@ class Main
       @valera = @game.do_action
       if @valera == false
         puts('Валера умер! Конец игры')
-        exit
+        puts('q - выход, Enter - начало новой игры')
+        input = gets.chomp
+        if input == ''
+          load 'lib/main.rb'
+        else
+          exit
+        end
       end
     end
   end
