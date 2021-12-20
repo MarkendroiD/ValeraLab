@@ -1,4 +1,4 @@
-# MarginalValera
+# ValeraValerkin
 
 
 ![Unit Tests & Lint](https://github.com/Hostile359/MarginalValera/workflows/Unit%20Tests%20&%20Lint/badge.svg)

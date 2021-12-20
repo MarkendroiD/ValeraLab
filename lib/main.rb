@@ -16,15 +16,15 @@ class Main
       @viewer.print_actions
       @reader.read_action(@game)
       @valera = @game.do_action
-      if @valera == false
-        puts('Валера умер! Конец игры')
-        puts('q - выход, Enter - начало новой игры')
-        input = gets.chomp
-        if input == ''
-          load 'lib/main.rb'
-        else
-          exit
-        end
+      next unless @valera == false
+
+      puts('Валера умер! Конец игры')
+      puts('q - выход, Enter - начало новой игры')
+      input = gets.chomp
+      if input == ''
+        load 'lib/main.rb'
+      else
+        exit
       end
     end
   end
