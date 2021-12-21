@@ -22,7 +22,7 @@ class Application
       puts('q - выход, Enter - начало новой игры')
       input = gets.chomp
       if input == ''
-        load 'lib/main.rb'
+        load './main.rb'
       else
         exit
       end
