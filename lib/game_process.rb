@@ -3,43 +3,41 @@ require_relative 'actions'
 require_relative 'saver'
 
 class GameProcess
-  attr_accessor :action_item, :valera, :actions
-
-  @actions = {
-    1 => ->(stats) { Actions.work(stats) },
-    2 => ->(stats) { Actions.nature(stats) },
-    3 => ->(stats) { Actions.relax_at_home(stats) },
-    4 => ->(stats) { Actions.relax_in_bar(stats) },
-    5 => ->(stats) { Actions.drink_with_marginals(stats) },
-    6 => ->(stats) { Actions.sing_in_metro(stats) },
-    7 => ->(stats) { Actions.go_to_sleep(stats) },
-    8 => ->(stats) { Saver.saver(stats, 8) },
-    9 => ->(stats) { Saver.saver(stats, 9) },
-    10 => ->(_stats) { exit }
-  }
+  attr_accessor :action_item, :valera, :actions_config
 
   def initialize
     @valera = Valera.new
   end
 
-  class << self
-    attr_reader :actions
-  end
-
-  def check_action(stats)
-    if @action_item == 1
-      return (@valera.stats['mana'] >= 50) || (@valera.stats['tire'] >= 10) || (@valera.check_stats(stats) == false)
+  def choose_action(stats)
+    item = @action_item - 1
+    case @action_item
+    when 1..7 then stats = Actions.new.action_proc(stats, @actions_config[item])
+    when 8 then stats = Saver.saver(stats, 8)
+    when 9 then stats = Saver.saver(stats, 9)
+    when 10 then exit
     end
-
-    @valera.check_stats(stats) == false
+    stats
   end
 
   def do_action
-    stats = GameProcess.actions[@action_item].call(@valera.stats.clone)
+    stats = choose_action(@valera.stats.clone)
+
     system('clear')
     puts("\nНедопустимое действие! Попробуйте снова") if check_action(stats)
     return false if @valera.stats['health'] <= 0
 
     valera
+  end
+
+  def check_action(stats)
+    if @action_item == 1
+      mana = @valera.stats['mana']
+      tire = @valera.stats['tire']
+      correct_stats = @valera.check_stats(stats)
+      return (mana >= 50) || (tire >= 10) || (correct_stats == false)
+    end
+
+    @valera.check_stats(stats) == false
   end
 end

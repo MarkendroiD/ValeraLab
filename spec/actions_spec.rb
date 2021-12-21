@@ -1,5 +1,6 @@
-require './lib/actions'
+require '../lib/actions'
 
+require 'yaml'
 RSpec.describe Actions do
   describe 'Actions' do
     stats = {
@@ -9,18 +10,19 @@ RSpec.describe Actions do
       'tire' => 25,
       'money' => 2500
     }
-
-    context 'work' do
+    acts = YAML.safe_load(File.read('./actions.yml'))
+    action = Actions.new
+    context 'Valera working' do
       expected = {
         'health' => 70,
-        'mana' => -20,
-        'fun' => -15,
-        'tire' => 95,
-        'money' => 2600
+        'mana' => 10,
+        'fun' => -10,
+        'tire' => 25,
+        'money' => 2500
       }
-      it { expect(Actions.work(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[0])).to eq expected }
     end
-    context 'nature' do
+    context 'Valera see nature' do
       expected = {
         'health' => 70,
         'mana' => 0,
@@ -28,9 +30,9 @@ RSpec.describe Actions do
         'tire' => 35,
         'money' => 2500
       }
-      it { expect(Actions.nature(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[1])).to eq expected }
     end
-    context 'relax_at_home' do
+    context 'Valera drink wine and watch TV series' do
       expected = {
         'health' => 65,
         'mana' => 40,
@@ -38,9 +40,9 @@ RSpec.describe Actions do
         'tire' => 35,
         'money' => 2480
       }
-      it { expect(Actions.relax_at_home(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[2])).to eq expected }
     end
-    context 'relax_in_bar' do
+    context 'Valera go to pub' do
       expected = {
         'health' => 60,
         'mana' => 70,
@@ -48,9 +50,9 @@ RSpec.describe Actions do
         'tire' => 65,
         'money' => 2400
       }
-      it { expect(Actions.relax_in_bar(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[3])).to eq expected }
     end
-    context 'drink_with_marginals' do
+    context 'Valera drink with marginals' do
       expected = {
         'health' => -10,
         'mana' => 100,
@@ -58,9 +60,9 @@ RSpec.describe Actions do
         'tire' => 105,
         'money' => 2350
       }
-      it { expect(Actions.drink_with_marginals(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[4])).to eq expected }
     end
-    context 'sing_in_metro' do
+    context 'Valera sing in the subway' do
       expected = {
         'health' => 70,
         'mana' => 20,
@@ -68,9 +70,9 @@ RSpec.describe Actions do
         'tire' => 45,
         'money' => 2510
       }
-      it { expect(Actions.sing_in_metro(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[5])).to eq expected }
     end
-    context 'sleep' do
+    context 'Valera sleep' do
       expected = {
         'health' => 160,
         'mana' => -40,
@@ -78,7 +80,7 @@ RSpec.describe Actions do
         'tire' => -45,
         'money' => 2500
       }
-      it { expect(Actions.go_to_sleep(stats.clone)).to eq expected }
+      it { expect(action.action_proc(stats.clone, acts[6])).to eq expected }
     end
   end
 end

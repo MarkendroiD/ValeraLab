@@ -1,6 +1,7 @@
 require_relative 'game_process'
 require_relative 'viewer'
 require_relative 'reader'
+require 'yaml'
 
 class Application
   def initialize
@@ -10,22 +11,29 @@ class Application
     @reader = Reader.new
   end
 
+  def dead_valera
+    puts('Валера умер! Конец игры')
+    puts('q - выход, Enter - начало новой игры')
+    input = gets.chomp
+    if input == ''
+      load './main.rb'
+    else
+      exit
+    end
+  end
+
   def start
     loop do
-      @viewer.print_stats(@valera)
-      @viewer.print_actions
-      @reader.read_action(@game)
+      @viewer.print_stats(@valera.stats)
+      @viewer.print_actions(@game.actions_config)
+
+      @game.actions_config = YAML.safe_load(File.read('./actions.yml'))
+      @game.action_item = @reader.read_action
+
       @valera = @game.do_action
       next unless @valera == false
 
-      puts('Валера умер! Конец игры')
-      puts('q - выход, Enter - начало новой игры')
-      input = gets.chomp
-      if input == ''
-        load './main.rb'
-      else
-        exit
-      end
+      dead_valera
     end
   end
 end

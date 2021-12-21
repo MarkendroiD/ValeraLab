@@ -1,62 +1,44 @@
 require_relative 'valera'
 
 class Actions
-  def self.work(stats)
-    stats['fun'] -= 5
-    stats['mana'] -= 30
-    stats['money'] += 100
-    stats['tire'] += 70
-    stats
+  attr_accessor :stats, :action_config
+
+  def initialize; end
+
+  def expr_exec(field, key)
+    field.send key['operator'], key['value'].to_i
   end
 
-  def self.nature(stats)
-    stats['fun'] += 1
-    stats['mana'] -= 10
-    stats['tire'] += 10
-    stats
+  def effect_body_exec(effect_expr)
+    if effect_expr.key?('conds') && cond_body_exec(effect_expr['conds'])
+      effects_exec(effect_expr['effects'])
+      return
+    end
+    field = effect_expr['field']
+    @stats[field] = expr_exec(@stats[field], effect_expr)
   end
 
-  def self.relax_at_home(stats)
-    stats['fun'] -= 1
-    stats['mana'] += 30
-    stats['tire'] += 10
-    stats['health'] -= 5
-    stats['money'] -= 20
-    stats
+  def effects_exec(effects_body)
+    effects_body.each { |key| effect_body_exec(key) }
   end
 
-  def self.relax_in_bar(stats)
-    stats['fun'] += 1
-    stats['mana'] += 60
-    stats['tire'] += 40
-    stats['health'] -= 10
-    stats['money'] -= 100
-    stats
+  def cond_body_exec(body)
+    body.each { |key| return false unless expr_exec @stats[key['field']], key }
+    true
   end
 
-  def self.drink_with_marginals(stats)
-    stats['fun'] += 5
-    stats['mana'] += 90
-    stats['tire'] += 80
-    stats['health'] -= 80
-    stats['money'] -= 150
-    stats
+  def conds_exec
+    if @action_config['conds'].nil?
+      true
+    else
+      cond_body_exec(@action_config['conds'])
+    end
   end
 
-  def self.sing_in_metro(stats)
-    stats['money'] += 50 if (stats['mana'] > 40) && (stats['mana'] < 70)
-    stats['fun'] += 1
-    stats['mana'] += 10
-    stats['tire'] += 20
-    stats['money'] += 10
-    stats
-  end
-
-  def self.go_to_sleep(stats)
-    stats['health'] += 90 if stats['mana'] < 30
-    stats['fun'] -= 3 if stats['mana'] > 70
-    stats['mana'] -= 50
-    stats['tire'] -= 70
-    stats
+  def action_proc(stats, action_config)
+    @action_config = action_config
+    @stats = stats
+    effects_exec(@action_config['effects']) if conds_exec
+    @stats
   end
 end
