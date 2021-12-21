@@ -2,7 +2,7 @@ require_relative 'game_process'
 require_relative 'viewer'
 require_relative 'reader'
 
-class Main
+class Application
   def initialize
     @game = GameProcess.new
     @viewer = Viewer.new
@@ -29,6 +29,3 @@ class Main
     end
   end
 end
-
-main = Main.new
-main.start
