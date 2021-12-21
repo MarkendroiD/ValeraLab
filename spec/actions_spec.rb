@@ -1,4 +1,4 @@
-require '../lib/actions'
+require './lib/actions'
 
 require 'yaml'
 RSpec.describe Actions do
