@@ -23,11 +23,11 @@ class Application
   end
 
   def start
+    @game.actions_config = YAML.safe_load(File.read('./actions.yml'))
     loop do
       @viewer.print_stats(@valera.stats)
       @viewer.print_actions(@game.actions_config)
 
-      @game.actions_config = YAML.safe_load(File.read('./actions.yml'))
       @game.action_item = @reader.read_action
 
       @valera = @game.do_action
